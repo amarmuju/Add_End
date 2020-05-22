@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Add End</string>
+    <string name="play">PLAY</string>
+    <string name="high_scores">HIGH SCORES</string>
+    <string name="add_end">ADD END</string>
+    <string name="tutorial">TUTORIAL</string>
+    <string name="author">Created By Amar Mujumdar</string>
+    <string name="mode">MODE</string>
+    <string name="add">Add (+)</string>
+    <string name="subtract">Subtract (-)</string>
+    <string name="multiply">Multiply (*)</string>
+    <string name="select_operation">Select Operation</string>
+</resources>
