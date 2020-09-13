@@ -18,11 +18,16 @@ public class PlayActivity extends AppCompatActivity {
     Model model = new Model();
     boolean enterPressed = false, over;
     Button nextButton;
+    int score = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+        score = 0;
+
+        TextView checkCorrect = findViewById(R.id.CheckCorrect);
+        checkCorrect.setVisibility(View.INVISIBLE);
 
         EditText input = findViewById(R.id.input);
         input.requestFocus();
@@ -41,27 +46,25 @@ public class PlayActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 enterPressed = true;
-                System.out.println("PRESSED!");
             }
         });
 
         CountDownTimer timer;
-        System.out.println(Model.getGameVersion().equals("Infinite"));
         if (Model.getGameVersion().equals("Infinite")) {
                 // TODO: Create function for start time
-                System.out.println("Reached here!");
                 timer = new CountDownTimer(5000, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         ((TextView) findViewById(R.id.timer)).setText(millisUntilFinished / 1000 + "");
                         if (enterPressed) {
-                            System.out.println("Enter is pressed.");
                             EditText input = findViewById(R.id.input);
                             int result = Integer.MIN_VALUE;
                             try {
-                                result = Integer.parseInt(input.getText().toString());
-                                if (model.isAnswerCorrect(result)) {
-                                    System.out.println("Answer is correct.");
+                                if (input.getText().toString() != null &&
+                                        model.isAnswerCorrect(Integer.parseInt(input.getText().toString()))) {
+                                    ((TextView) findViewById(R.id.CheckCorrect)).setText("Correct!");
+                                    findViewById(R.id.CheckCorrect).setVisibility(View.VISIBLE);
+                                    score++;
                                     ((TextView) findViewById(R.id.firstNumber)).setText(Integer.toString(model.changeTopNumber()));
                                     ((TextView) findViewById(R.id.secondNumber)).setText(Integer.toString(model.changeBottomNumber()));
                                     input.setText("");
@@ -71,10 +74,12 @@ public class PlayActivity extends AppCompatActivity {
                                     enterPressed = false;
                                     start();
                                 } else {
+                                    ((TextView) findViewById(R.id.CheckCorrect)).setText("Incorrect!");
+                                    findViewById(R.id.CheckCorrect).setVisibility(View.VISIBLE);
                                     Model.changeStillGoing(false);
                                     cancel();
                                 }
-                            } catch (NullPointerException | NumberFormatException e) {
+                            } catch (NumberFormatException e) {
                                 Model.changeStillGoing(false);
                                 cancel();
                             }
@@ -92,6 +97,27 @@ public class PlayActivity extends AppCompatActivity {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     ((TextView) findViewById(R.id.timer)).setText(millisUntilFinished / 1000 + "");
+                    if (enterPressed) {
+                        EditText input = findViewById(R.id.input);
+                        int result = Integer.MIN_VALUE;
+                        try {
+                            if (input.getText().toString() != null &&
+                                    model.isAnswerCorrect(Integer.parseInt(input.getText().toString()))) {
+                                score++;
+                                ((TextView) findViewById(R.id.firstNumber)).setText(Integer.toString(model.changeTopNumber()));
+                                ((TextView) findViewById(R.id.secondNumber)).setText(Integer.toString(model.changeBottomNumber()));
+                                input.setText("");
+                                input.requestFocus();
+                                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+                                enterPressed = false;
+                            }
+                        } catch (NumberFormatException e) {
+                            // nothing to do here
+                            e.getMessage();
+                        }
+                        enterPressed = false;
+                    }
                 }
 
                 @Override
